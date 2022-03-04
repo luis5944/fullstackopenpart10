@@ -4,22 +4,25 @@ import { useField } from "formik";
 import TextInput from "./TextInput";
 import Text from "./Text";
 
-const styles = StyleSheet.create({
-  errorText: {
-    marginTop: 5,
-  },
-});
-
 const FormikTextInput = ({ name, ...props }) => {
   const [field, meta, helpers] = useField(name);
   const showError = meta.touched && meta.error;
-  const style = {
-    borderWidth: 1,
-    marginHorizontal: 10,
-    marginVertical: 10,
-    borderRadius: 5,
-    padding: 10,
-  };
+
+  const styles = StyleSheet.create({
+    errorText: {
+      marginBottom: 5,
+      color: "red",
+      textAlign: "center",
+    },
+    text: {
+      borderWidth: 1,
+      marginHorizontal: 10,
+      marginVertical: 10,
+      borderRadius: 5,
+      padding: 10,
+      borderColor: showError && "#d73a4a",
+    },
+  });
   return (
     <>
       <TextInput
@@ -27,7 +30,7 @@ const FormikTextInput = ({ name, ...props }) => {
         onBlur={() => helpers.setTouched(true)}
         value={field.value}
         error={showError}
-        style={style}
+        style={styles.text}
         {...props}
       />
       {showError && <Text style={styles.errorText}>{meta.error}</Text>}
