@@ -19,6 +19,7 @@ const initialValues = {
   username: "Kalle",
   password: "password",
 };
+
 const SignIn = () => {
   const [signIn] = useSignIn();
   let navigate = useNavigate();
@@ -32,6 +33,10 @@ const SignIn = () => {
       Alert.alert("Error", error.message);
     }
   };
+  return <SignInContainer onSubmit={onSubmit} />;
+};
+
+export function SignInContainer({ onSubmit }) {
   return (
     <View>
       <Formik
@@ -43,6 +48,6 @@ const SignIn = () => {
       </Formik>
     </View>
   );
-};
+}
 
 export default SignIn;

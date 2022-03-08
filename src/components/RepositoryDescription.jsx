@@ -2,6 +2,7 @@ import React from "react";
 import { Image, StyleSheet, View } from "react-native";
 import Text from "./Text";
 
+
 const RepositoryDescription = ({ repository }) => {
   const styles = StyleSheet.create({
     logo: {
@@ -31,22 +32,26 @@ const RepositoryDescription = ({ repository }) => {
     },
   });
   return (
-    <View style={styles.containerDescription}>
+    <View testID="repositoryItem" style={styles.containerDescription}>
       <View style={styles.logoContainer}>
         <Image
           style={styles.logo}
-          source={{ uri: repository.item.ownerAvatarUrl }}
+          source={{ uri: repository.ownerAvatarUrl }}
         />
       </View>
 
       <View>
-        <Text style={styles.description} fontWeight="bold">
-          {repository.item.fullName}
+        <Text style={styles.description} fontWeight="bold" testID="fullName">
+          {repository.fullName}
         </Text>
-        <Text color="textSecondary" style={styles.description}>
-          {repository.item.description}
+        <Text
+          color="textSecondary"
+          style={styles.description}
+          testID="description"
+        >
+          {repository.description}
         </Text>
-        <Text style={styles.language}>{repository.item.language}</Text>
+        <Text  testID="language" style={styles.language}>{repository.language}</Text>
       </View>
     </View>
   );
