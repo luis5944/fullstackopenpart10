@@ -4,7 +4,8 @@ import useRepositories from "../hooks/useRepositories";
 import Text from "./Text";
 import Pressable from "react-native/Libraries/Components/Pressable/Pressable";
 import { Link } from "react-router-native";
-
+import { Picker } from "@react-native-picker/picker";
+import { useState } from "react";
 const styles = StyleSheet.create({
   separator: {
     height: 10,
@@ -25,7 +26,7 @@ export const RepositoryListContainer = ({ data }) => {
       renderItem={(item) => (
         <Pressable>
           <Link to={`/${item.item.id}`}>
-            <RepositoryItem repository={item.item} isFromPage={false}/>
+            <RepositoryItem repository={item.item} isFromPage={false} />
           </Link>
         </Pressable>
       )}
@@ -34,8 +35,8 @@ export const RepositoryListContainer = ({ data }) => {
 };
 
 const RepositoryList = () => {
-  const { data, loading, error } = useRepositories();
-
+  const [sort, setSort] = useState("");
+  const { data, loading, error } = useRepositories({sort});
   if (loading) {
     return <Text>Loading</Text>;
   }
@@ -43,7 +44,28 @@ const RepositoryList = () => {
     return <Text>Error fetching data</Text>;
   }
 
-  return <RepositoryListContainer data={data} />;
+  return (
+    <>
+      <Picker
+        selectedValue={sort}
+        onValueChange={(itemValue) => {
+          setSort(itemValue);
+        }}
+       prompt="Select an item"
+      >
+        <Picker.Item label="Latest repositories" value="Latest repositories" />
+        <Picker.Item
+          label="Highest rated repositories"
+          value="Highest rated repositories"
+        />
+        <Picker.Item
+          label="Lowest rated repositories"
+          value="Lowest rated repositories"
+        />
+      </Picker>
+      <RepositoryListContainer data={data} />
+    </>
+  );
 };
 
 export default RepositoryList;

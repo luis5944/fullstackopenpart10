@@ -3,8 +3,11 @@ import { REPOSITORY_DATA } from "./fragment";
 
 export const GET_REPOSITORIES = gql`
   ${REPOSITORY_DATA}
-  query {
-    repositories {
+  query Repositories(
+    $orderBy: AllRepositoriesOrderBy
+    $orderDirection: OrderDirection
+  ) {
+    repositories(orderBy: $orderBy, orderDirection: $orderDirection) {
       edges {
         node {
           ...RepositoryData
@@ -31,3 +34,19 @@ export const GET_REPOSITORY = gql`
     }
   }
 `;
+
+// Últimos:
+// {
+//   "orderBy": "CREATED_AT"
+// }
+
+// Mejores votados:
+// {
+//   "orderBy": "RATING_AVERAGE"
+// }
+
+//  Peores votados:
+// {
+//   "orderBy": "RATING_AVERAGE",
+//   "orderDirection": "ASC"
+// }
