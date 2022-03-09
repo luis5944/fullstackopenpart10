@@ -40,6 +40,7 @@ const AppBar = () => {
           <>
             <AppBarTab link="/review">Create a review</AppBarTab>
             <AppBarTab>Sign out</AppBarTab>
+            <AppBarTab link="/myreviews">My Reviews</AppBarTab>
           </>
         )}
       </ScrollView>

@@ -7,12 +7,26 @@ export const GET_REPOSITORIES = gql`
     $orderBy: AllRepositoriesOrderBy
     $orderDirection: OrderDirection
     $searchKeyword: String
+    $first: Int
+    $after: String
   ) {
-    repositories(orderBy: $orderBy, orderDirection: $orderDirection, searchKeyword: $searchKeyword) {
+    repositories(
+      orderBy: $orderBy
+      orderDirection: $orderDirection
+      searchKeyword: $searchKeyword
+      first: $first
+      after: $after
+    ) {
       edges {
         node {
           ...RepositoryData
         }
+      }
+      pageInfo {
+        endCursor
+        hasNextPage
+        hasPreviousPage
+        startCursor
       }
     }
   }
@@ -23,31 +37,68 @@ export const GET_USER_LOGIN = gql`
     me {
       id
       username
+      reviews {
+        edges {
+          node {
+            repositoryId
+            id
+            text
+            rating
+            createdAt
+            user {
+              id
+              username
+            }
+          }
+          cursor
+        }
+        pageInfo {
+          endCursor
+          startCursor
+          hasNextPage
+        }
+      }
     }
   }
 `;
+
+
+
 
 export const GET_REPOSITORY = gql`
-  ${REPOSITORY_DATA}
   query Repository($id: ID!) {
     repository(id: $id) {
-      ...RepositoryData
+      id
+      ownerAvatarUrl
+      fullName
+      description
+      language
+      stargazersCount
+      forksCount
+      reviewCount
+      ratingAverage
+      url
+      reviews {
+        edges {
+          node {
+            repositoryId
+            id
+            text
+            rating
+            createdAt
+            user {
+              id
+              username
+            }
+          }
+          cursor
+        }
+        pageInfo {
+          endCursor
+          startCursor
+          hasNextPage
+        }
+      }
     }
   }
 `;
-
-// Últimos:
-// {
-//   "orderBy": "CREATED_AT"
-// }
-
-// Mejores votados:
-// {
-//   "orderBy": "RATING_AVERAGE"
-// }
-
-//  Peores votados:
-// {
-//   "orderBy": "RATING_AVERAGE",
-//   "orderDirection": "ASC"
-// }

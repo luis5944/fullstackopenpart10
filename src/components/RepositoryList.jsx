@@ -8,6 +8,8 @@ import { Picker } from "@react-native-picker/picker";
 import { useState } from "react";
 import { Searchbar } from "react-native-paper";
 import { useDebounce } from "use-debounce";
+import React from "react";
+
 const styles = StyleSheet.create({
   separator: {
     height: 10,
@@ -16,7 +18,7 @@ const styles = StyleSheet.create({
 
 const ItemSeparator = () => <View style={styles.separator} />;
 
-export const RepositoryListContainer = ({ data }) => {
+export const RepositoryListContainer = ({ data, onEndReach }) => {
   const repositoryNodes = data
     ? data.repositories.edges.map((edge) => edge.node)
     : [];
@@ -25,6 +27,8 @@ export const RepositoryListContainer = ({ data }) => {
     <FlatList
       data={repositoryNodes}
       ItemSeparatorComponent={ItemSeparator}
+      onEndReached={onEndReach}
+      onEndReachedThreshold={0.5}
       renderItem={(item) => (
         <Pressable>
           <Link to={`/${item.item.id}`}>
@@ -39,14 +43,22 @@ export const RepositoryListContainer = ({ data }) => {
 const RepositoryList = () => {
   const [sort, setSort] = useState("");
   const [search, setSearch] = useState("");
-  const [value] = useDebounce(search, 500);
-  const { data, loading, error } = useRepositories({ sort, search: value });
+  const [value] = useDebounce(search, 1500);
+  const { data, loading, error, fetchMore } = useRepositories({
+    sort,
+    search: value,
+    first: 6,
+  });
   if (loading) {
     return <Text>Loading</Text>;
   }
   if (error) {
     return <Text>Error fetching data</Text>;
   }
+
+  const onEndReach = () => {
+    fetchMore();
+  };
 
   return (
     <>
@@ -71,7 +83,7 @@ const RepositoryList = () => {
         />
       </Picker>
 
-      <RepositoryListContainer data={data} />
+      <RepositoryListContainer data={data} onEndReach={onEndReach} />
     </>
   );
 };
