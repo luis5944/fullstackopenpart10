@@ -4,10 +4,11 @@ import { Pressable, StyleSheet, View, Alert } from "react-native";
 import FormikTextInput from "./FormikTextInput";
 import Text from "./Text";
 import * as yup from "yup";
-import useReview from "../hooks/useReview";
 import { useNavigate } from "react-router-native";
+import useSignUp from "../hooks/useSignUp";
+import useSignIn from "../hooks/useSignIn";
 
-const ReviewForm = ({ onSubmit }) => {
+const SignUpForm = ({ onSubmit }) => {
   const styles = StyleSheet.create({
     container: {
       justifyContent: "center",
@@ -19,20 +20,23 @@ const ReviewForm = ({ onSubmit }) => {
       color: "#ffffff",
       paddingVertical: 5,
       alignSelf: "center",
-      paddingHorizontal: 66,
+      paddingHorizontal: 79,
     },
   });
 
   return (
     <View style={styles.container}>
-      <FormikTextInput name="ownerName" placeholder="Repository owner name" />
-      <FormikTextInput name="repositoryName" placeholder="Repository name" />
-      <FormikTextInput name="rating" placeholder="Rating between 0 and 100" />
-      <FormikTextInput name="review" placeholder="Review" multiline />
+      <FormikTextInput name="username" placeholder="Username" />
+      <FormikTextInput name="password" placeholder="Passowrd" secureTextEntry />
+      <FormikTextInput
+        name="passwordConfirm"
+        placeholder="Password confirmation"
+        secureTextEntry
+      />
 
       <Pressable onPress={onSubmit} style={styles.button} testID="submit">
         <Text style={styles.button} color="white">
-          Create a review
+          Sign up
         </Text>
       </Pressable>
     </View>
@@ -40,31 +44,29 @@ const ReviewForm = ({ onSubmit }) => {
 };
 
 const validationSchema = yup.object().shape({
-  ownerName: yup.string().required("Repository name is required"),
-
-  repositoryName: yup.string().required("Repository owner's name is required"),
-
-  rating: yup
-    .number()
-    .min(0, "Rating must be greater than 0")
-    .max(100, "Rating must be less than 100")
-    .required("Rating is required"),
-  review: yup.string(),
+  username: yup.string().min(1).max(30).required("Repository name is required"),
+  password: yup.string().min(5).max(50).required("Password is required"),
+  passwordConfirm: yup
+    .string()
+    .oneOf([yup.ref("password"), "Password confirm must be equal to Password"])
+    .required("Password confirm is required"),
 });
 const initialValues = {
-  repositoryName: "react-async",
-  ownerName: "async-library",
-  rating: "100",
-  review: "hello",
+  username: "luis",
+  password: "password",
+  passwordConfirm: "password",
 };
 
-const CreateReview = () => {
-  const [reviewCreated] = useReview();
+const SignUp = () => {
+  const [userCreated] = useSignUp();
+  const [signIn] = useSignIn();
   let navigate = useNavigate();
   const onSubmit = async (values) => {
     try {
-      const { createReview } = await reviewCreated(values);
-      navigate(`/${createReview.repositoryId}`, { replace: true });
+      const { username, password } = values;
+      await userCreated(values);
+      await signIn({ username, password });
+      navigate(`/`, { replace: true });
     } catch (error) {
       Alert.alert("Error", error.message);
     }
@@ -77,10 +79,10 @@ const CreateReview = () => {
         onSubmit={onSubmit}
         validationSchema={validationSchema}
       >
-        {({ handleSubmit }) => <ReviewForm onSubmit={handleSubmit} />}
+        {({ handleSubmit }) => <SignUpForm onSubmit={handleSubmit} />}
       </Formik>
     </View>
   );
 };
 
-export default CreateReview;
+export default SignUp;

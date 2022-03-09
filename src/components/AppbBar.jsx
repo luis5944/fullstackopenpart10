@@ -34,7 +34,7 @@ const AppBar = () => {
         {data.me === null ? (
           <>
             <AppBarTab link="/signin">Sign in</AppBarTab>
-            <AppBarTab>Sign up</AppBarTab>
+            <AppBarTab link="/signup">Sign up</AppBarTab>
           </>
         ) : (
           <>
