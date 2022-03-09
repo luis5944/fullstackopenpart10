@@ -21,6 +21,7 @@ const RepositoryItem = ({ repository, isFromPage }) => {
       padding: 15,
     },
   });
+ 
 
   return (
     <View style={styles.container} key={repository.id}>

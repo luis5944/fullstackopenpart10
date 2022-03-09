@@ -1,13 +1,14 @@
 import { useApolloClient } from "@apollo/client";
 import React from "react";
 import { Pressable, StyleSheet } from "react-native";
-import { Link } from "react-router-native";
+import { Link, useNavigate } from "react-router-native";
 import useAuthStorage from "../hooks/useAuthStorage";
 import Text from "./Text";
 
 const AppBarTab = ({ children, link }) => {
   const apolloClient = useApolloClient();
   const authStorage = useAuthStorage();
+  let navigate = useNavigate();
   const styles = StyleSheet.create({
     text: {
       marginLeft: 10,
@@ -21,8 +22,11 @@ const AppBarTab = ({ children, link }) => {
     return (
       <Pressable
         onPress={async () => {
-          await authStorage.removeAccessToken();
-          apolloClient.resetStore();
+          if (children === "Sign out") {
+            await authStorage.removeAccessToken();
+            apolloClient.resetStore();
+            navigate("/");
+          }
         }}
       >
         <Text fontSize="subheading" style={styles.text}>
