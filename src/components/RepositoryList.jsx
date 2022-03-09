@@ -6,6 +6,8 @@ import Pressable from "react-native/Libraries/Components/Pressable/Pressable";
 import { Link } from "react-router-native";
 import { Picker } from "@react-native-picker/picker";
 import { useState } from "react";
+import { Searchbar } from "react-native-paper";
+import { useDebounce } from "use-debounce";
 const styles = StyleSheet.create({
   separator: {
     height: 10,
@@ -36,7 +38,9 @@ export const RepositoryListContainer = ({ data }) => {
 
 const RepositoryList = () => {
   const [sort, setSort] = useState("");
-  const { data, loading, error } = useRepositories({sort});
+  const [search, setSearch] = useState("");
+  const [value] = useDebounce(search, 500);
+  const { data, loading, error } = useRepositories({ sort, search: value });
   if (loading) {
     return <Text>Loading</Text>;
   }
@@ -46,12 +50,15 @@ const RepositoryList = () => {
 
   return (
     <>
+      <Searchbar
+        placeholder="Search"
+        value={search}
+        onChangeText={(query) => setSearch(query)}
+      />
       <Picker
         selectedValue={sort}
-        onValueChange={(itemValue) => {
-          setSort(itemValue);
-        }}
-       prompt="Select an item"
+        onValueChange={(itemValue) => setSort(itemValue)}
+        prompt="Select an item"
       >
         <Picker.Item label="Latest repositories" value="Latest repositories" />
         <Picker.Item
@@ -63,6 +70,7 @@ const RepositoryList = () => {
           value="Lowest rated repositories"
         />
       </Picker>
+
       <RepositoryListContainer data={data} />
     </>
   );
